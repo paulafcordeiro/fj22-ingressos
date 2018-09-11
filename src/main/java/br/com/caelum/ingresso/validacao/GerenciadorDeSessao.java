@@ -15,24 +15,26 @@ public class GerenciadorDeSessao {
 		// TODO Auto-generated constructor stub
 	}
 
-					public boolean cabe(Sessao novaSessao) {
-								
-							
-							return listaDeSessoes.stream().noneMatch(x -> conflita(x,novaSessao));
-						
-					}
-	
+	public boolean cabe(Sessao novaSessao) {
 
-	private boolean conflita(Sessao antigaSessao, Sessao novaSessao) {
-		LocalDateTime inicioSessaoAntiga = antigaSessao.getHorario().atDate(LocalDate.now());
-		LocalDateTime finalSessaoAntiga = antigaSessao.getHorarioTermino().atDate(LocalDate.now());
-		LocalDateTime inicioSessaoNova = novaSessao.getHorario().atDate(LocalDate.now());
-		
-		 if (inicioSessaoNova.isAfter(inicioSessaoAntiga) && inicioSessaoNova.isBefore(finalSessaoAntiga))
-			 return true;
-		
-		return false;
-		
+		return listaDeSessoes.stream().noneMatch(x -> conflita(x, novaSessao));
+
+	}
+
+	private boolean conflita(Sessao sessao1, Sessao sessao2) {
+		LocalDate hoje = LocalDate.now();
+		LocalDateTime inicioSessao1 = sessao1.getHorario().atDate(hoje);
+		LocalDateTime inicioSessao2 = sessao2.getHorario().atDate(hoje);
+		LocalDateTime fimSessao1 = inicioSessao1.plus(sessao1.getFilme().getDuracao());
+		LocalDateTime fimSessao2 = inicioSessao2.plus(sessao1.getFilme().getDuracao());
+		boolean sessao1ComecaAntesDaSessao2 = inicioSessao1.isBefore(inicioSessao2);
+
+		if (sessao1ComecaAntesDaSessao2) {
+			return fimSessao1.isAfter(inicioSessao2);
+		} else {
+			return fimSessao2.isAfter(inicioSessao1);
+		}
+
 	}
 
 }
